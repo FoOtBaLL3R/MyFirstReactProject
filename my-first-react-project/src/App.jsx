@@ -6,6 +6,7 @@ import { createNote, fetchNotes } from './services/note'
 import Pagination from './components/Pagination'
 
 function App() {
+  let showPage;
   const [page, setPage] = useState(1);
   const [pageQty, setpageQty] = useState(0);
   
@@ -30,10 +31,18 @@ function App() {
   const onCreate = async (note) => {
     await createNote(note);
     let notesAll = await fetchNotes(filter);
-    setNotes(notesAll);
+    setNotes(notesAll.notes);
+    setpageQty(notesAll.totalPages);
   }
 
   const paginate = pageNum => setPage(pageNum);
+
+  if(pageQty > 1){
+    showPage = (
+      <Pagination pages={pageQty} page={page} paginate={paginate}/>
+    );
+
+  }
 
   return (
     <section className='p-8 flex flex-row justify-start items-start gap-12'>
@@ -48,7 +57,7 @@ function App() {
             <Note title={n.name} description={n.description} createdAt={n.createAt}/>
           </li>
         ))}
-        <Pagination pages={pageQty} page={page} paginate={paginate}/>
+        {showPage}
       </ul>
     </section>
   )
