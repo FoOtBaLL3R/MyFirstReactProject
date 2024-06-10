@@ -1,11 +1,14 @@
-import { Select, Input } from '@chakra-ui/react'
 import CreateNoteForm from './components/CreateNoteForm'
 import Note from './components/Note'
 import Filters from './components/Filters'
 import { useEffect, useState } from 'react'
 import { createNote, fetchNotes } from './services/note'
+import Pagination from './components/Pagination'
 
 function App() {
+  const [page, setPage] = useState(1);
+  const [pageQty, setpageQty] = useState(0);
+  
   const [notes, setNotes] = useState([]);
   const [filter, setFilter] = useState({
     search: "",
@@ -15,19 +18,22 @@ function App() {
 
   useEffect(() => {
     const fetchData = async () => {
-      let notesAll = await fetchNotes(filter);
-      // console.log(notesAll);
-      setNotes(notesAll);
+      let notesAll = await fetchNotes(filter, page);
+      // console.log(notesAll);//totalPages
+      setNotes(notesAll.notes);
+      setpageQty(notesAll.totalPages);
     }
 
     fetchData();
 
-  }, [filter]);
+  }, [filter, page]);
   const onCreate = async (note) => {
     await createNote(note);
     let notesAll = await fetchNotes(filter);
     setNotes(notesAll);
   }
+
+  const paginate = pageNum => setPage(pageNum);
 
   return (
     <section className='p-8 flex flex-row justify-start items-start gap-12'>
@@ -42,6 +48,7 @@ function App() {
             <Note title={n.name} description={n.description} createdAt={n.createAt}/>
           </li>
         ))}
+        <Pagination pages={pageQty} page={page} paginate={paginate}/>
       </ul>
     </section>
   )
