@@ -36,13 +36,21 @@ function App() {
   }
 
   const paginate = pageNum => setPage(pageNum);
+  // const handlePageChange = pageNum1 => setPage(pageNum1);
+  const handlePageChange = (currentPage) => {
+    setPage(currentPage);
+  };
 
   if(pageQty > 1){
+  // const handlePageChange = pageNum1 => setPage(pageNum1);
+
     showPage = (
-      <Pagination pages={pageQty} page={page} paginate={paginate}/>
+      <Pagination pages={pageQty} page={page} paginate={handlePageChange}/>
     );
+    
 
   }
+  
 
   return (
     <section className='p-8 flex flex-row justify-start items-start gap-12'>
