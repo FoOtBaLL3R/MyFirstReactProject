@@ -2,8 +2,9 @@ import CreateNoteForm from './components/CreateNoteForm'
 import Note from './components/Note'
 import Filters from './components/Filters'
 import { useEffect, useState } from 'react'
-import { createNote, fetchNotes } from './services/note'
+import { createNote, fetchNotes, deleteNote, updateNote } from './services/note'
 import Pagination from './components/Pagination'
+import UpdateNoteForm from './components/UpdateNoteForm'
 
 function App() {
   let showPage;
@@ -16,6 +17,9 @@ function App() {
     sortItem: "date",
     sortOrder: "desc",
   });
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [valNote, setValNote] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,17 +37,39 @@ function App() {
     let notesAll = await fetchNotes(filter);
     setNotes(notesAll.notes);
     setpageQty(notesAll.totalPages);
-  }
+  };
 
-  const paginate = pageNum => setPage(pageNum);
+  const deleteNt = async (noteI) => {
+    // console.log(noteI);
+    await deleteNote(noteI);
+    let notesAll = await fetchNotes(filter);
+    setNotes(notesAll.notes);
+    setpageQty(notesAll.totalPages);
+  };
+
+  const openUpdateForm = (noteDatas) => {
+    // const noteData = {
+    //   id: idNOte,
+    //   name: title,
+    //   description: desc,
+    // };
+    console.log(noteDatas);
+    setIsModalOpen(true);
+    setValNote(noteDatas);
+  };
+
+  const handleCloseModal = () => setIsModalOpen(false);
+
+  const handleUpdateNote = async (n) => {
+    
+  };
+
   // const handlePageChange = pageNum1 => setPage(pageNum1);
   const handlePageChange = (currentPage) => {
     setPage(currentPage);
   };
 
   if(pageQty > 1){
-  // const handlePageChange = pageNum1 => setPage(pageNum1);
-
     showPage = (
       <Pagination pages={pageQty} page={page} paginate={handlePageChange}/>
     );
@@ -60,11 +86,17 @@ function App() {
         
       </div>
       <ul className='flex flex-col gap-5 w-1/2'>
-        {notes.map((n) => (
-          <li key={n.id}>
-            <Note title={n.name} description={n.description} createdAt={n.createAt}/>
-          </li>
-        ))}
+        <UpdateNoteForm 
+          isOpen={isModalOpen}
+          onClose={handleCloseModal} 
+          noteValue={valNote} 
+          noteUpdate={handleUpdateNote} 
+        />
+        <Note 
+          myNotes={notes} 
+          noteDelete={deleteNt} 
+          noteEdt={openUpdateForm}
+        />            
         {showPage}
       </ul>
     </section>
