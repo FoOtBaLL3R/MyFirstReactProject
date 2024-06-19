@@ -24,7 +24,6 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       let notesAll = await fetchNotes(filter, page);
-      // console.log(notesAll);//totalPages
       setNotes(notesAll.notes);
       setpageQty(notesAll.totalPages);
     }
@@ -32,39 +31,36 @@ function App() {
     fetchData();
 
   }, [filter, page]);
+
+  const selectNotes = async () => {
+    let notesAll = await fetchNotes(filter);
+    setNotes(notesAll.notes);
+    setpageQty(notesAll.totalPages);
+  };
+
   const onCreate = async (note) => {
     await createNote(note);
-    let notesAll = await fetchNotes(filter);
-    setNotes(notesAll.notes);
-    setpageQty(notesAll.totalPages);
+    selectNotes();
   };
 
-  const deleteNt = async (noteI) => {
-    // console.log(noteI);
+  const deleteNt = async (noteI) => {    
     await deleteNote(noteI);
-    let notesAll = await fetchNotes(filter);
-    setNotes(notesAll.notes);
-    setpageQty(notesAll.totalPages);
+    selectNotes();
   };
 
-  const openUpdateForm = (noteDatas) => {
-    // const noteData = {
-    //   id: idNOte,
-    //   name: title,
-    //   description: desc,
-    // };
-    console.log(noteDatas);
+  const openUpdateForm = (noteDatas) => {    
     setIsModalOpen(true);
     setValNote(noteDatas);
   };
 
   const handleCloseModal = () => setIsModalOpen(false);
 
-  const handleUpdateNote = async (n) => {
-    
+  const handleUpdateNote = async (noteData) => {
+    await updateNote(noteData);    
+    selectNotes();
+    handleCloseModal();
   };
 
-  // const handlePageChange = pageNum1 => setPage(pageNum1);
   const handlePageChange = (currentPage) => {
     setPage(currentPage);
   };
