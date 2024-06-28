@@ -24,8 +24,9 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       let notesAll = await fetchNotes(filter, page);
-      setNotes(notesAll.notes);
+      setNotes(notesAll.notes);      
       setpageQty(notesAll.totalPages);
+      console.log(page);
     }
 
     fetchData();
